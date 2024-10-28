@@ -1,11 +1,9 @@
-package cache
+package gu
 
 import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"github.com/loveyu233/gu/client"
-	"github.com/loveyu233/gu/ctx"
 	"github.com/sirupsen/logrus"
 )
 
@@ -39,21 +37,21 @@ func MustInitRedisClient(config ...RedisConfig) *redis.Client {
 	}
 
 	if dConfig.Ctx == nil {
-		dConfig.Ctx = ctx.Timeout()
+		dConfig.Ctx = Timeout()
 	}
 
-	client.RedisClient = redis.NewClient(&redis.Options{
+	RedisClient = redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%d", dConfig.Host, dConfig.Port),
 		Username: dConfig.Username,
 		Password: dConfig.Password,
 		DB:       dConfig.DB,
 	})
 
-	if err = client.RedisClient.Ping(dConfig.Ctx).Err(); err != nil {
+	if err = RedisClient.Ping(dConfig.Ctx).Err(); err != nil {
 		logrus.Panicf("redis client init err: %v\n", err)
 	}
 
 	logrus.Info("successfully init redis client")
 
-	return client.RedisClient
+	return RedisClient
 }

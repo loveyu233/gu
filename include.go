@@ -1,4 +1,4 @@
-package tools
+package gu
 
 // Include slice包含item
 func Include[T comparable](slice []T, item T) bool {

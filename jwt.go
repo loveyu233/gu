@@ -1,8 +1,7 @@
-package security
+package gu
 
 import (
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/loveyu233/gu/public"
 	"time"
 )
 
@@ -18,7 +17,7 @@ func CreateToken(user any, expireTime ...time.Time) (string, error) {
 		"expire_time": expire,
 	}
 
-	accessJwtKey := []byte(public.JWTSECRET)
+	accessJwtKey := []byte(JWTSECRET)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	return token.SignedString(accessJwtKey)

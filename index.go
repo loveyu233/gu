@@ -1,8 +1,6 @@
-package es
+package gu
 
 import (
-	"github.com/loveyu233/gu/client"
-	"github.com/loveyu233/gu/ctx"
 	"github.com/sirupsen/logrus"
 	"reflect"
 	"strings"
@@ -41,12 +39,12 @@ func CreateIndex(index ...Index) error {
 			continue
 		}
 
-		if _, err := client.EsClient.CreateIndex(name).
+		if _, err := EsClient.CreateIndex(name).
 			BodyJson(map[string]any{
 				"mappings": map[string]any{
 					"properties": mapping,
 				},
-			}).Do(ctx.Timeout()); err != nil {
+			}).Do(Timeout()); err != nil {
 			if !strings.Contains(err.Error(), "already exists") {
 				return err
 			}

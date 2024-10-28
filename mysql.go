@@ -1,9 +1,7 @@
-package mysql
+package gu
 
 import (
 	"fmt"
-	"github.com/loveyu233/gu/client"
-	"github.com/loveyu233/gu/public"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -64,10 +62,10 @@ func MustInitMysqlClient(config ...MysqlConfig) *gorm.DB {
 
 	logrus.Info("successfully init mysql client")
 
-	client.MySqlClient = func(cfg ...public.UseConfig) *gorm.DB {
-		var dUseConfig public.UseConfig
+	MySqlClient = func(cfg ...UseConfig) *gorm.DB {
+		var dUseConfig UseConfig
 		if len(cfg) == 0 {
-			dUseConfig = public.DefaultUseConfig
+			dUseConfig = DefaultUseConfig
 		} else {
 			dUseConfig = cfg[0]
 		}

@@ -1,10 +1,8 @@
-package pg
+package gu
 
 import (
 	"database/sql"
 	"fmt"
-	"github.com/loveyu233/gu/client"
-	"github.com/loveyu233/gu/public"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -70,10 +68,10 @@ func MustInitPgSqlClient(config ...PgConfig) *gorm.DB {
 	sqlDB.SetConnMaxLifetime(2 * time.Hour)
 	sqlDB.SetMaxIdleConns(10)
 
-	client.PgSqlClient = func(cfg ...public.UseConfig) *gorm.DB {
-		var dUseConfig public.UseConfig
+	PgSqlClient = func(cfg ...UseConfig) *gorm.DB {
+		var dUseConfig UseConfig
 		if len(cfg) == 0 {
-			dUseConfig = public.DefaultUseConfig
+			dUseConfig = DefaultUseConfig
 		} else {
 			dUseConfig = cfg[0]
 		}

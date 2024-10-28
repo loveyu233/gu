@@ -1,8 +1,7 @@
-package public
+package gu
 
 import (
 	"context"
-	"github.com/loveyu233/gu/ctx"
 )
 
 type UseConfig struct {
@@ -11,7 +10,7 @@ type UseConfig struct {
 }
 
 var DefaultUseConfig = UseConfig{
-	Ctx:   ctx.Timeout(),
+	Ctx:   Timeout(),
 	Debug: true,
 }
 

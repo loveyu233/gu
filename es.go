@@ -1,7 +1,6 @@
-package es
+package gu
 
 import (
-	"github.com/loveyu233/gu/client"
 	"github.com/olivere/elastic/v7"
 	"github.com/sirupsen/logrus"
 )
@@ -33,6 +32,6 @@ func MustInitESClient(config ...EsConfig) *elastic.Client {
 
 	logrus.Info("successfully init es client")
 
-	client.EsClient = esClient
+	EsClient = esClient
 	return esClient
 }

@@ -1,4 +1,4 @@
-package middlewares
+package gu
 
 import (
 	"encoding/json"
@@ -6,9 +6,6 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/loveyu233/gu/public"
-
-	"github.com/loveyu233/gu/resp"
 	"github.com/sirupsen/logrus"
 	"strings"
 )
@@ -20,7 +17,7 @@ type FiberAuthConfig struct {
 
 var (
 	defaultConfig = &FiberAuthConfig{
-		Secret: public.JWTSECRET,
+		Secret: JWTSECRET,
 		GetTokenStrFunc: func(c *fiber.Ctx) string {
 			token := c.Cookies("token")
 			if token == "" {
@@ -90,11 +87,11 @@ func FiberAuth(user any, configs ...*FiberAuthConfig) fiber.Handler {
 		)
 
 		if token == "" {
-			return resp.Resp401(c, "token为空")
+			return Resp401(c, "token为空")
 		}
 
 		if dataMap, err = jwtDecode(token); err != nil {
-			return resp.Resp401(c, err.Error())
+			return Resp401(c, err.Error())
 		}
 
 		bytes, _ := json.Marshal(dataMap["user"])

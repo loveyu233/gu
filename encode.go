@@ -1,4 +1,4 @@
-package pgtype
+package gu
 
 import (
 	"bytes"

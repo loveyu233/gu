@@ -1,11 +1,8 @@
-package s3
+package gu
 
 import (
 	"bytes"
 	"github.com/gofiber/fiber/v2"
-	"github.com/loveyu233/gu/client"
-	"github.com/loveyu233/gu/ctx"
-	"github.com/loveyu233/gu/resp"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/sirupsen/logrus"
@@ -44,7 +41,7 @@ func MustInitMinioClient(cfg ...MinioConfig) *minio.Client {
 	}
 
 	logrus.Info("successfully init minio client")
-	client.MinioClient = minioClient
+	MinioClient = minioClient
 
 	return minioClient
 }
@@ -56,9 +53,9 @@ func CreateBucket(bucketName string, location ...string) error {
 	} else {
 		l = "us-east-1"
 	}
-	err := client.MinioClient.MakeBucket(ctx.Timeout(), bucketName, minio.MakeBucketOptions{Region: l})
+	err := MinioClient.MakeBucket(Timeout(), bucketName, minio.MakeBucketOptions{Region: l})
 	if err != nil {
-		exists, errBucketExists := client.MinioClient.BucketExists(ctx.Timeout(), bucketName)
+		exists, errBucketExists := MinioClient.BucketExists(Timeout(), bucketName)
 		if errBucketExists == nil && exists {
 			logrus.Infof("bucket %s 已存在", bucketName)
 		} else {
@@ -72,7 +69,7 @@ func CreateBucket(bucketName string, location ...string) error {
 
 func UploadDataByte(data []byte, bucketName, objectName string) error {
 	contentType := http.DetectContentType(data)
-	object, err := client.MinioClient.PutObject(ctx.Timeout(), bucketName, objectName, bytes.NewBuffer(data), int64(len(data)), minio.PutObjectOptions{ContentType: contentType})
+	object, err := MinioClient.PutObject(Timeout(), bucketName, objectName, bytes.NewBuffer(data), int64(len(data)), minio.PutObjectOptions{ContentType: contentType})
 	if err != nil {
 		return err
 	}
@@ -81,7 +78,7 @@ func UploadDataByte(data []byte, bucketName, objectName string) error {
 }
 
 func UploadDataReader(data io.Reader, dataSize int64, bucketName, objectName, contentType string) error {
-	object, err := client.MinioClient.PutObject(ctx.Timeout(), bucketName, objectName, data, dataSize, minio.PutObjectOptions{ContentType: contentType})
+	object, err := MinioClient.PutObject(Timeout(), bucketName, objectName, data, dataSize, minio.PutObjectOptions{ContentType: contentType})
 	if err != nil {
 		return err
 	}
@@ -97,7 +94,7 @@ type Download struct {
 }
 
 func DownloadData(bucketName, objectName string) (*Download, error) {
-	object, err := client.MinioClient.GetObject(ctx.Timeout(), bucketName, objectName, minio.GetObjectOptions{})
+	object, err := MinioClient.GetObject(Timeout(), bucketName, objectName, minio.GetObjectOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -120,13 +117,13 @@ func StartS3FiberHandler(prefix string) fiber.Handler {
 		path = strings.TrimPrefix(path, prefix)
 		arr := strings.Split(path, "/")
 		if len(arr) < 2 {
-			return resp.Resp400(c, nil, "参数错误")
+			return Resp400(c, nil, "参数错误")
 		}
 		bucket := arr[0]
 		object := arr[1]
 		data, err := DownloadData(bucket, object)
 		if err != nil {
-			return resp.Resp500(c, err, "文件获取失败")
+			return Resp500(c, err, "文件获取失败")
 		}
 		c.Response().Header.Set("content-type", data.ContextType)
 		return c.Send(data.Data)

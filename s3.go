@@ -1,12 +1,10 @@
-package s3
+package gu
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/loveyu233/gu/client"
-	"github.com/loveyu233/gu/tools"
 	"github.com/sirupsen/logrus"
 	"io"
 	"log"
@@ -47,13 +45,13 @@ func MustInitS3Client(s3Config ...S3Config) *s3.S3 {
 	}
 
 	logrus.Info("Successfully created S3 client")
-	client.S3Client = s3.New(sess)
+	S3Client = s3.New(sess)
 
-	return client.S3Client
+	return S3Client
 }
 
 func S3CreateBucket(bucket string, isPublic ...bool) error {
-	_, err := client.S3Client.CreateBucket(&s3.CreateBucketInput{
+	_, err := S3Client.CreateBucket(&s3.CreateBucketInput{
 		Bucket: aws.String(bucket),
 	})
 	if err != nil {
@@ -79,7 +77,7 @@ func S3CreateBucket(bucket string, isPublic ...bool) error {
         ]
     }`
 
-	_, err = client.S3Client.PutBucketPolicy(&s3.PutBucketPolicyInput{
+	_, err = S3Client.PutBucketPolicy(&s3.PutBucketPolicyInput{
 		Bucket: aws.String(bucket),
 		Policy: aws.String(policy),
 	})
@@ -92,7 +90,7 @@ func S3CreateBucket(bucket string, isPublic ...bool) error {
 }
 
 func S3DeleteObj(bucket, key string) error {
-	_, err := client.S3Client.DeleteObject(&s3.DeleteObjectInput{
+	_, err := S3Client.DeleteObject(&s3.DeleteObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
 	})
@@ -104,7 +102,7 @@ func S3DeleteObj(bucket, key string) error {
 }
 
 func S3ClearBucket(bucket string, isDeleteBucket ...bool) error {
-	objects, err := client.S3Client.ListObjects(&s3.ListObjectsInput{Bucket: aws.String(bucket)})
+	objects, err := S3Client.ListObjects(&s3.ListObjectsInput{Bucket: aws.String(bucket)})
 	if err != nil {
 		return err
 	}
@@ -120,7 +118,7 @@ func S3ClearBucket(bucket string, isDeleteBucket ...bool) error {
 		return nil
 	}
 
-	_, err = client.S3Client.DeleteBucket(&s3.DeleteBucketInput{
+	_, err = S3Client.DeleteBucket(&s3.DeleteBucketInput{
 		Bucket: aws.String(bucket),
 	})
 	if err != nil {
@@ -133,7 +131,7 @@ func S3ClearBucket(bucket string, isDeleteBucket ...bool) error {
 }
 
 func S3PutObj(bucket, key, contentType string, size int64, data io.ReadSeeker) error {
-	_, err := client.S3Client.PutObject(&s3.PutObjectInput{
+	_, err := S3Client.PutObject(&s3.PutObjectInput{
 		Bucket:        aws.String(bucket),
 		Key:           aws.String(key),
 		Body:          data,
@@ -150,7 +148,7 @@ func S3PutObj(bucket, key, contentType string, size int64, data io.ReadSeeker) e
 }
 
 func S3PutFile(bucket string, file *os.File, key ...string) error {
-	contentType, err := tools.GetFileContentType(file)
+	contentType, err := GetFileContentType(file)
 	if err != nil {
 		return err
 	}
@@ -160,7 +158,7 @@ func S3PutFile(bucket string, file *os.File, key ...string) error {
 	} else {
 		name = filepath.Base(file.Name())
 	}
-	_, err = client.S3Client.PutObject(&s3.PutObjectInput{
+	_, err = S3Client.PutObject(&s3.PutObjectInput{
 		Bucket:      aws.String(bucket),
 		Key:         aws.String(name),
 		Body:        file,

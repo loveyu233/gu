@@ -1,4 +1,4 @@
-package tools
+package gu
 
 func Min[T int | int32 | int64 | float32 | float64](x, y T) T {
 	if x > y {
