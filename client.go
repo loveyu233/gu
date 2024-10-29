@@ -5,6 +5,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/minio/minio-go/v7"
 	"github.com/olivere/elastic/v7"
+	"github.com/streadway/amqp"
 	"gorm.io/gorm"
 )
 
@@ -20,4 +21,6 @@ var (
 	MinioClient *minio.Client
 
 	S3Client *s3.S3
+
+	RabbitClient *amqp.Connection
 )
